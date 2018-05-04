@@ -1,1 +1,40 @@
-@import url("https://cesiumjs.org/Cesium/Build/Apps/Sandcastle/templates/bucket.css")
+@import url("https://cesiumjs.org/Cesium/Build/Apps/Sandcastle/templates/bucket.css");
+#contoursToggleBtn {
+  position:absolute;
+  z-index: 99999;
+  bottom: 50px;
+  right: 20px;
+  text-decoration: none;
+	border: 0;
+	border-radius: 3px;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+	display: inline-block;
+	line-height: 16px;
+	margin: 6px 8px 6px 0;
+	min-width: 88px;
+	padding: 10px 5px;
+	text-align: center;
+	text-transform: uppercase;
+  transition: 0.1s all ease;
+  cursor: pointer;
+}
+#contoursToggleBtn:hover {
+  color: darkgreen;
+  background-color: whitesmoke;
+}
+#contoursToggleBtn.visible {
+  background-color: darkgreen;
+  color: whitesmoke;
+}
+#contoursToggleBtn.visible:hover {
+  background-color: darkgray;
+  color: whitesmoke;
+}
+#contoursToggleBtn.not-visible {
+  background-color: darkgray;
+  color: whitesmoke;
+}
+#contoursToggleBtn.not-visible:hover {
+  background-color: darkgreen;
+  color: whitesmoke;
+}

@@ -1,41 +1,48 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var mapboxNAIPImagery = new Cesium.MapboxImageryProvider({
-        mapId: 'brightrain.map-bpwe9yas',
-        accessToken: 'pk.eyJ1IjoiYnJpZ2h0cmFpbiIsImEiOiJyMjgtNGk4In0.Y64dPMiS4Xi8BXRiDhWXyg'
-    });
-
     var viewer = new Cesium.Viewer('cesiumContainer', {
-        imageryProvider: mapboxNAIPImagery,
-        baseLayerPicker: false
+        terrainProvider: Cesium.createWorldTerrain({
+            requestVertexNormals: true
+        })
     });
-    
-    var mapboxOutdoors = new Cesium.MapboxImageryProvider({
-        mapId: 'brightrain.ooac5jf6',
-        accessToken: 'pk.eyJ1IjoiYnJpZ2h0cmFpbiIsImEiOiJyMjgtNGk4In0.Y64dPMiS4Xi8BXRiDhWXyg',
-        alpha: 0.5
-    });
-    // I don't think this (classic) mapbox service supports alpha channel
-    //viewer.scene.imageryLayers.addImageryProvider(mapboxOutdoors);
-    
+    // light it up!
+    viewer.scene.globe.enableLighting = true;
+
     // SHOUT OUT to Axis Maps for these geojson contours via
     // http://contours.axismaps.com
-    viewer.dataSources.add(Cesium.GeoJsonDataSource.load("/data/rainier-countours.geojson", {
+    // add contours as geojson polygons
+    var contours;
+    viewer.dataSources.add(Cesium.GeoJsonDataSource.load("data/rainier-countours.geojson", {
         stroke: Cesium.Color.DARKGRAY,
         strokeWidth: 1,
         fill: Cesium.Color.WHITE.withAlpha(0.5)
     })).then(
         function(dataSource) {
+            contours = dataSource;
+            // extrude contour polys by elevation
             var p = dataSource.entities.values;
             for (var i = 0; i < p.length; i++) {
                 p[i].polygon.extrudedHeight = p[i].properties.elevation.getValue();
             }
         });
     viewer.camera.flyTo({
+        // fly on over to mount reindeer
         destination : Cesium.Cartesian3.fromDegrees(-121.45, 46.25, 20000.0),
         orientation : {
             heading : Cesium.Math.toRadians(340.0),
             pitch : Cesium.Math.toRadians(-10.0),
-            roll : 0.15
+            roll : 0.3
         }
     });
+    document.getElementById("contoursToggleBtn").onclick = toggleContours;
+    function toggleContours(e) {
+        if(viewer.dataSources.contains(contours)) {
+            viewer.dataSources.remove(contours);
+            e.target.classList.remove("visible");
+            e.target.classList.add("not-visible");
+        } else {
+            viewer.dataSources.add(contours);
+            e.target.classList.add("visible");
+            e.target.classList.remove("not-visible");
+        }
+    }
 });
